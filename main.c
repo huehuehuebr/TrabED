@@ -35,7 +35,7 @@ typedef struct arvore {
 /* Inicio das funcoes */
 
 Node* criaNode(Node **no);
-int inserir(Node **no, Aluno *info);
+int inserir(Node **no);
 void imprimir(Node *no);
 void preOrdem(Node *no);
 void rotacaoEsq(Node **no);
@@ -45,6 +45,7 @@ void rotacaoDuplaDir(Node **no);
 Aluno cadastrarAluno();
 void printAluno(Aluno a);
 int menu();
+int calcularAlturaArvore(Node *inicio);
 
 /* Fim das funcoes */
 
@@ -56,26 +57,16 @@ int main(int argc, char **argv) {
 
         switch (opcao) {
             case 1:
-                inserir(&inicio);
+
                 break;
             case 2:
-                //                excluir(&inicio);
-                break;
-            case 3:
-                //                buscar(&inicio);
-                break;
-            case 4:
-                //                imprimir(&inicio);
-                break;
-            case 5:
-                altura = calcularAlturaArvore(inicio);
-                printf("Altura %d\n\n", altura);
-                break;
-            case 0:
+
                 break;
             default:
-                printf("Opção Inválida");
+            {
+                printf("Opcao Invalida\n");
                 break;
+            }
         }
         getchar();
         getchar();
@@ -94,21 +85,21 @@ Node* criaNode(Node **no) {
     return aux;
 }
 
-int inserir(Node **no, Aluno *info) {
+int inserir(Node **no){
 
 
     return 0;
 }
 
 void inserirRecursivo(Node **inicio, Aluno **novo) {
-    if (((*inicio)->info->matricula) > ((*novo)->matricula)) {
+    if (((*inicio)->info.matricula) > ((*novo)->matricula)) {
         if ((*inicio)->esq) {
             inserirRecursivo(&((*inicio)->esq), novo);
         } else {
             (*inicio)->esq = (*novo);
             printf("Registro inserido com Sucesso\n\n");
         }
-    } else if (((*inicio)->info->matricula) < ((*novo)->matricula)) {
+    } else if (((*inicio)->info.matricula) < ((*novo)->matricula)) {
         if ((*inicio)->dir) {
             inserirRecursivo(&((*inicio)->dir), novo);
         } else {
@@ -192,4 +183,14 @@ void printAluno(Aluno a) {
     printf("Nota 2-> %.2f\n", a.nota2);
     printf("Nota 3-> %.2f\n", a.nota3);
     printf("Média-> %.2f\n", a.media);
+}
+
+int calcularAlturaArvore(Node *inicio) {
+    if (inicio == NULL) {
+        return 0;
+    } else {
+        int altLeft = calcularAlturaArvore(inicio->esq);
+        int altRight = calcularAlturaArvore(inicio->dir);
+        return 1 + (altLeft > altRight ? altLeft : altRight);
+    }
 }
