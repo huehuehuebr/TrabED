@@ -37,6 +37,7 @@ typedef struct arvore {
 Node* criaNode(Node **no);
 int inserir(Node **no);
 void imprimir(Node *no);
+int buscar(Node *no);
 void preOrdem(Node *no);
 void rotacaoEsq(Node **no);
 void rodacaoDir(Node **no);
@@ -114,6 +115,20 @@ void inserirRecursivo(Node **inicio, Aluno **novo) {
 int remover(Node **no) {
 
     return 0;
+}
+
+int buscar(Node *no, int n){
+	if(no==NULL){
+		return 0;
+	}
+	else
+		if(no->info.matricula == n)
+			return no->info.matricula;
+		if(no->info.matricula > n)
+			return buscar(no->dir,n);
+		else
+			return buscar(no->esq,n);
+		
 }
 
 void imprimir(Node *no) {
