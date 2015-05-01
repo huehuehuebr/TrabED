@@ -37,6 +37,10 @@ typedef struct arvore {
 Node* criaNode(Node **no);
 int inserir(Node **no);
 void imprimir(Node *no);
+<<<<<<< Updated upstream
+=======
+int buscar(Node *no, int n);
+>>>>>>> Stashed changes
 void preOrdem(Node *no);
 void rotacaoEsq(Node **no);
 void rodacaoDir(Node **no);
@@ -46,6 +50,10 @@ Aluno* cadastrarAluno();
 void printAluno(Aluno a);
 int menu();
 int calcularAlturaArvore(Node *inicio);
+float somarMediaTurma(Node *no);
+int qtdNodes(Node *no);
+float calcularMediaTurma(Node *no);
+
 
 /* Fim das funcoes */
 
@@ -139,6 +147,9 @@ int menu() {
     printf("1-> Inserir Aluno\n");
     printf("2-> Remover Aluno\n");
     printf("3-> Imprimir Aluno\n");
+	printf("4-> Buscar Aluno\n");
+	printf("5-> Percorrer Arvore e Calcular média da turma\n");
+	printf("4-> \n");
     printf("0-> Sair\n");
     scanf("%d", &op);
 
@@ -195,4 +206,30 @@ int calcularAlturaArvore(Node *inicio) {
         int altRight = calcularAlturaArvore(inicio->dir);
         return 1 + (altLeft > altRight ? altLeft : altRight);
     }
+}
+
+float somarMediaTurma(Node *no){
+	if(no==NULL)
+		return 0;
+	else
+		return no->info.media + somarMediaTurma(no);
+}
+
+int qtdNodes(Node *no){
+	if(no==NULL)
+		return 0;
+	else{
+		int qtdEsq = qtdNodes(no->esq);
+		int qtdDir = qtdNodes(no->dir);
+		
+		return qtdEsq + qtdDir;
+	}
+}
+
+float calcularMediaTurma(Node *no){
+	
+	float media;
+	media =  somarMediaTurma(no) / qtdNodes(no);
+	return media;
+	
 }
