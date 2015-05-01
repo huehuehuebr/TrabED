@@ -7,7 +7,7 @@
 /* Inicio das constantes */
 
 #define VARCHAR 255
-//#define 
+
 /* Fim das constantes */
 
 /* Inicio das structs */
@@ -37,13 +37,12 @@ typedef struct arvore {
 Node* criaNode(Node **no);
 int inserir(Node **no);
 void imprimir(Node *no);
-int buscar(Node *no);
 void preOrdem(Node *no);
 void rotacaoEsq(Node **no);
 void rodacaoDir(Node **no);
 void rotacaoDuplaEsq(Node **no);
 void rotacaoDuplaDir(Node **no);
-Aluno cadastrarAluno();
+Aluno* cadastrarAluno();
 void printAluno(Aluno a);
 int menu();
 int calcularAlturaArvore(Node *inicio);
@@ -57,8 +56,10 @@ int main(int argc, char **argv) {
         opcao = menu();
 
         switch (opcao) {
+            case 0:
+                break;
             case 1:
-
+                inserir(&inicio);
                 break;
             case 2:
 
@@ -71,7 +72,6 @@ int main(int argc, char **argv) {
         }
         getchar();
         getchar();
-
     } while (opcao != 0);
     return 0;
 }
@@ -86,9 +86,10 @@ Node* criaNode(Node **no) {
     return aux;
 }
 
-int inserir(Node **no){
+int inserir(Node **inicio) {
+    Aluno *aluno = cadastrarAluno();
 
-
+    inserirRecursivo(inicio, &aluno);
     return 0;
 }
 
@@ -115,20 +116,6 @@ void inserirRecursivo(Node **inicio, Aluno **novo) {
 int remover(Node **no) {
 
     return 0;
-}
-
-int buscar(Node *no, int n){
-	if(no==NULL){
-		return 0;
-	}
-	else
-		if(no->info.matricula == n)
-			return no->info.matricula;
-		if(no->info.matricula > n)
-			return buscar(no->dir,n);
-		else
-			return buscar(no->esq,n);
-		
 }
 
 void imprimir(Node *no) {
@@ -158,7 +145,7 @@ int menu() {
     return op;
 }
 
-Aluno cadastrarAluno() {
+Aluno* cadastrarAluno() {
     Aluno aluno;
     printf("\nInsira a matricula do aluno: ");
     scanf("%d", &aluno.matricula);
@@ -180,7 +167,7 @@ Aluno cadastrarAluno() {
     aluno.media = (aluno.nota1 + aluno.nota2 + aluno.nota3) / 3;
      */
 
-    return aluno;
+    return &aluno;
 }
 
 void printAluno(Aluno a) {
