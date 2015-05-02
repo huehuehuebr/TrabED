@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <conio.h>
 #include <locale.h>
 
 /* Inicio das constantes */
@@ -31,8 +32,11 @@ typedef struct arvore {
 /* Inicio das funcoes */
 Node* criaNode();
 int inserir(Node **no);
+int remover(Node **no);
+void inserirRecursivo(Node **inicio, Aluno **novo);
 void imprimir(Node *no);
-int buscar(Node *no, int n);
+void buscar(Node *no);
+void busca(Node *b, int matricula);
 void imprimirPreOrdem(Node *no);
 Node* rotacaoEsq(Node **no);
 Node* rodacaoDir(Node **no);
@@ -53,7 +57,7 @@ int main(int argc, char **argv) {
 
     setlocale(LC_ALL, "portuguese");
 
-    int opcao, altura;
+    int opcao, altura,retorno;
     Node *inicio = NULL;
 
     do {
@@ -66,7 +70,27 @@ int main(int argc, char **argv) {
                 inserir(&inicio);
                 break;
             case 2:
-
+				retorno = remover(&inicio);
+				if(retorno==0)
+					printf("Não foi Removido!\n");
+				else
+					printf("Aluno removido com sucesso!\n");
+                break;
+			case 3:
+				imprimir(inicio);
+                break;
+			case 4:
+				buscar(inicio);
+				break;
+			case 5:
+				calcularMediaTurma(inicio);
+                break;
+			case 6:
+				calcularBalanceamentoArvore(inicio);
+                break;
+			case 7:
+				altura = calcularAlturaArvore(inicio);
+				printf("A Altura da Arvore eh %d\n",altura);
                 break;
             default:
             {
@@ -148,8 +172,51 @@ Aluno* cadastrarAluno() {
     return aluno;
 }
 
-int remover(Node **no) {
+void busca(Node *b, int matricula){
+	
+	while(b != NULL) {
+		if(b->aluno->matricula == matricula) {
+			system("cls");
+			imprimirAluno(*b->aluno);
+		}	
+	
+		else
+			if(matricula < b->aluno->matricula)
+				b = b->esq;
+			else
+				b = b->dir;
+	}
+	printf("Aluno não matriculado!\n");
+	getche();
+}
 
+void buscar(Node *a) {
+	int matricula;
+	if(a == NULL) {
+		printf("Árvore vazia!");
+		getche();
+		return;
+	}
+	else
+	{
+		printf("Digite a matricula do aluno: ");
+		scanf("%d",&matricula);
+		busca(a,matricula);
+	}		
+}
+
+int remover(Node **no) {
+	/*
+	 * Para removermos um nó de valor K na árvore devemos buscar K nesta árvore e, caso K seja folha da arvore, apenas deleta-lo. 
+	 * Caso K pertença à árvore, mas não seja uma folha da árvore devemos substituir o valor de K com o valor mais próximo possível menor ou igual a K pertencente à árvore.
+	 * Para encontrar este valor basta percorrer a subárvore da direita do filho da esquerda de K, até encontrarmos o maior valor M desta subárvore.
+	 * O valor de K será substituído por M, K será deletado da árvore e caso M tenha um filho à esquerda esse filho ocupará sua antiga posição na árvore.*/
+	/* 
+	 Node *atual;
+	 int num;
+	 atual = no;
+	 */
+	 
     return 0;
 }
 
@@ -172,6 +239,7 @@ int menu() {
     printf("4) Buscar Aluno\n");
     printf("5) Percorrer Arvore e Calcular média da turma\n");
     printf("6) Balancear árvore\n");
+	printf("7) Calcular altura da árvore\n");
     printf("0) Sair\n\n");
     printf("Selecione uma opção: ");
     scanf("%d", &op);
