@@ -24,7 +24,7 @@ typedef struct arvore {
     Aluno *aluno;
     struct arvore *esq;
     struct arvore *dir;
-    int isBalanciada;
+    int balanceamento;
 } Node;
 /* Fim das structs */
 
@@ -45,6 +45,7 @@ int calcularAlturaArvore(Node *inicio);
 float somarMediaTurma(Node *no);
 int qtdNodes(Node *no);
 float calcularMediaTurma(Node *no);
+int calcularBalanceamentoArvore(Node *inicio);
 
 /* Fim das funcoes */
 
@@ -81,7 +82,7 @@ int main(int argc, char **argv) {
 
 Node* criaNode() {
     Node *aux = malloc(sizeof (Node));
-    aux->isBalanciada = 0;
+    aux->balanceamento = 0;
     aux->esq = NULL;
     aux->dir = NULL;
     aux->aluno = NULL;
@@ -201,16 +202,29 @@ int calcularAlturaArvore(Node *inicio) {
     } else {
         int altLeft = calcularAlturaArvore(inicio->esq);
         int altRight = calcularAlturaArvore(inicio->dir);
-
         return 1 + (altLeft > altRight ? altLeft : altRight);
+    }
+}
+
+int calcularBalanceamentoArvore(Node *inicio) {
+    if (inicio == NULL) {
+        return 0;
+    } else {
+        int altLeft = calcularAlturaArvore(inicio->esq);
+        int altRight = calcularAlturaArvore(inicio->dir);
+        (*inicio).balanceamento = altRight - altLeft;
+        return (*inicio).balanceamento;
     }
 }
 
 float somarMediaTurma(Node *no) {
     if (no == NULL)
         return 0;
-    else
-        return no->aluno->media + somarMediaTurma(no->esq) + somarMediaTurma(no->dir);
+    else {
+        int mediaEsq = somarMediaTurma(no->esq);
+        int mediaDir = somarMediaTurma(no->dir);
+        return no->aluno->media + mediaEsq + mediaDir;
+    }
 }
 
 int qtdNodes(Node *no) {
@@ -220,16 +234,14 @@ int qtdNodes(Node *no) {
         int qtdEsq = qtdNodes(no->esq);
         int qtdDir = qtdNodes(no->dir);
 
-        return qtdEsq + qtdDir;
+        return 1 + qtdEsq + qtdDir;
     }
 }
 
 float calcularMediaTurma(Node *no) {
-
     float media;
     media = somarMediaTurma(no) / qtdNodes(no);
     return media;
-
 }
 
 void rotacaoEsq(Node **no);
