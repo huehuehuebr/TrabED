@@ -3,11 +3,8 @@
 #include <string.h>
 #include <locale.h>
 
-
 /* Inicio das constantes */
-
 #define VARCHAR 255
-
 /* Fim das constantes */
 
 /* Inicio das structs */
@@ -29,22 +26,20 @@ typedef struct arvore {
     struct arvore *dir;
     int isBalanciada;
 } Node;
-
 /* Fim das structs */
 
 /* Inicio das funcoes */
-
 Node* criaNode();
 int inserir(Node **no);
 void imprimir(Node *no);
 int buscar(Node *no, int n);
-void preOrdem(Node *no);
+void imprimirPreOrdem(Node *no);
 void rotacaoEsq(Node **no);
 void rodacaoDir(Node **no);
 void rotacaoDuplaEsq(Node **no);
 void rotacaoDuplaDir(Node **no);
 Aluno* cadastrarAluno();
-void printAluno(Aluno a);
+void imprimirAluno(Aluno a);
 int menu();
 int calcularAlturaArvore(Node *inicio);
 float somarMediaTurma(Node *no);
@@ -54,9 +49,12 @@ float calcularMediaTurma(Node *no);
 /* Fim das funcoes */
 
 int main(int argc, char **argv) {
-    setlocale(LC_ALL, "");
+
+    setlocale(LC_ALL, "portuguese");
+
     int opcao, altura;
     Node *inicio = NULL;
+
     do {
         opcao = menu();
 
@@ -95,7 +93,7 @@ int inserir(Node **inicio) {
     if (*inicio == NULL) {
         (*inicio) = criaNode();
         (*inicio)->aluno = aluno;
-        printf("Registro inserido com Sucesso\n\n");
+        printf("\n\nRegistro inserido com Sucesso\n");
     } else {
         inserirRecursivo(inicio, &aluno);
     }
@@ -107,18 +105,20 @@ void inserirRecursivo(Node **inicio, Aluno **novo) {
         if ((*inicio)->esq) {
             inserirRecursivo(&((*inicio)->esq), novo);
         } else {
-            (*inicio)->esq = (*novo);
-            printf("Registro inserido com Sucesso\n\n");
+            (*inicio)->esq = criaNode();
+            (*inicio)->esq->aluno = (*novo);
+            printf("\n\nRegistro inserido com Sucesso\n");
         }
     } else if (((*inicio)->aluno->matricula) < ((*novo)->matricula)) {
         if ((*inicio)->dir) {
             inserirRecursivo(&((*inicio)->dir), novo);
         } else {
-            (*inicio)->dir = (*novo);
-            printf("Registro inserido com Sucesso\n\n");
+            (*inicio)->dir = criaNode();
+            (*inicio)->dir->aluno = (*novo);
+            printf("\n\nRegistro inserido com Sucesso\n");
         }
     } else {
-        printf("Número de matrícula já cadastrado!\n\n");
+        printf("\n\nNúmero de matrícula já cadastrado!\n");
     }
 }
 
@@ -129,19 +129,19 @@ Aluno* cadastrarAluno() {
     printf("\nInsira o nome do aluno: ");
     scanf(" %[^\n]s", &(*aluno).nome);
     /*
-            printf("\nInsira o endereco do aluno: ");
-            gets(aluno.endereco);
-            printf("\nInsira o telefone do aluno: ");
-            gets(aluno.telefone);
-            printf("\nInsira o e-mail do aluno: ");
-            gets(aluno.email);
-            printf("\nInsira a nota 1 do aluno: ");
-            scanf("%f", &aluno.nota1);
-            printf("\nInsira a nota 2 do aluno: ");
-            scanf("%f", &aluno.nota2);
-            printf("\nInsira a nota 3 do aluno: ");
-            scanf("%f", &aluno.nota3);
-            aluno.media = (aluno.nota1 + aluno.nota2 + aluno.nota3) / 3;
+    printf("\nInsira o endereco do aluno: ");
+    gets(aluno.endereco);
+    printf("\nInsira o telefone do aluno: ");
+    gets(aluno.telefone);
+    printf("\nInsira o e-mail do aluno: ");
+    gets(aluno.email);
+    printf("\nInsira a 1ª nota do aluno: ");
+    scanf("%f", &aluno.nota1);
+    printf("\nInsira a 2ª nota do aluno: ");
+    scanf("%f", &aluno.nota2);
+    printf("\nInsira a 3ª nota do aluno: ");
+    scanf("%f", &aluno.nota3);
+    aluno.media = (aluno.nota1 + aluno.nota2 + aluno.nota3) / 3;
      */
 
     return aluno;
@@ -153,38 +153,32 @@ int remover(Node **no) {
 }
 
 void imprimir(Node *no) {
-    preOrdem(no);
+    imprimirPreOrdem(no);
 }
 
-void preOrdem(Node *no) {
-    printAluno(*no->aluno);
-    preOrdem(no->esq);
-    preOrdem(no->dir);
+void imprimirPreOrdem(Node *no) {
+    imprimirAluno(*no->aluno);
+    imprimirPreOrdem(no->esq);
+    imprimirPreOrdem(no->dir);
 }
-
-void rotacaoEsq(Node **no);
-void rodacaoDir(Node **no);
-void rotacaoDuplaEsq(Node **no);
-void rotacaoDuplaDir(Node **no);
 
 int menu() {
     int op;
-    printf("*** Cadastro de Alunos [Arvore AVL] ***\n");
+    printf("*** Cadastro de Alunos [Árvore AVL] ***\n");
     printf("1) Inserir Aluno\n");
     printf("2) Remover Aluno\n");
     printf("3) Imprimir Aluno\n");
     printf("4) Buscar Aluno\n");
     printf("5) Percorrer Arvore e Calcular média da turma\n");
-    printf("4) \n");
+    printf("6) Balancear árvore\n");
     printf("0) Sair\n\n");
-    printf("Selecione uma opção");
+    printf("Selecione uma opção: ");
     scanf("%d", &op);
 
     return op;
 }
 
-void printAluno(Aluno a) {
-
+void imprimirAluno(Aluno a) {
     printf("\n---- Aluno ----\n");
     printf("Matricula: %d\n", a.matricula);
     printf("Nome: ");
@@ -215,9 +209,8 @@ int calcularAlturaArvore(Node *inicio) {
 float somarMediaTurma(Node *no) {
     if (no == NULL)
         return 0;
-
     else
-        return no->aluno->media + somarMediaTurma(no);
+        return no->aluno->media + somarMediaTurma(no->esq) + somarMediaTurma(no->dir);
 }
 
 int qtdNodes(Node *no) {
@@ -238,3 +231,11 @@ float calcularMediaTurma(Node *no) {
     return media;
 
 }
+
+void rotacaoEsq(Node **no);
+
+void rodacaoDir(Node **no);
+
+void rotacaoDuplaEsq(Node **no);
+
+void rotacaoDuplaDir(Node **no);
