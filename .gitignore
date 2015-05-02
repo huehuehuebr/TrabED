@@ -1,3 +1,10 @@
 /configurations.xml
 /launcher.properties
 /Makefile
+*.dep.inc
+*.o.d
+*.o
+*.exe
+/build/
+/dist/
+/nbproject/
