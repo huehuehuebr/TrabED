@@ -34,10 +34,10 @@ int inserir(Node **no);
 void imprimir(Node *no);
 int buscar(Node *no, int n);
 void imprimirPreOrdem(Node *no);
-void rotacaoEsq(Node **no);
-void rodacaoDir(Node **no);
-void rotacaoDuplaEsq(Node **no);
-void rotacaoDuplaDir(Node **no);
+Node* rotacaoEsq(Node **no);
+Node* rodacaoDir(Node **no);
+Node* rotacaoDuplaEsq(Node **no);
+Node* rotacaoDuplaDir(Node **no);
 Aluno* cadastrarAluno();
 void imprimirAluno(Aluno a);
 int menu();
@@ -212,7 +212,7 @@ int calcularBalanceamentoArvore(Node *inicio) {
     } else {
         int altLeft = calcularAlturaArvore(inicio->esq);
         int altRight = calcularAlturaArvore(inicio->dir);
-        (*inicio).balanceamento = altRight - altLeft;
+        (*inicio).balanceamento = altLeft - altRight;
         return (*inicio).balanceamento;
     }
 }
@@ -244,10 +244,64 @@ float calcularMediaTurma(Node *no) {
     return media;
 }
 
-void rotacaoEsq(Node **no);
+Node* rotacaoEsq(Node **no) {
+    Node *noRotac = (*no)->dir;
+    if (noRotac->esq) {
+        (*no)->dir = noRotac->esq;
+    } else {
+        (*no)->dir = NULL;
+    }
+    noRotac->esq = *no;
+    return noRotac;
+}
 
-void rodacaoDir(Node **no);
+Node* rodacaoDir(Node **no) {
+    Node *noRotac = (*no)->esq;
+    if (noRotac->dir) {
+        (*no)->esq = noRotac->dir;
+    } else {
+        (*no)->esq = NULL;
+    }
+    noRotac->esq = *no;
+    return noRotac;
+}
 
-void rotacaoDuplaEsq(Node **no);
+Node* rotacaoDuplaEsq(Node **no) {
+    Node *noRotac1 = (*no)->esq;
+    Node *noRotac2 = noRotac1->dir;
 
-void rotacaoDuplaDir(Node **no);
+    if (noRotac2->esq) {
+        noRotac1->dir = noRotac2->esq;
+    } else {
+        noRotac1->dir = NULL;
+    }
+    if (noRotac2->dir) {
+        (*no)->esq = noRotac2->dir;
+    } else {
+        (*no)->esq = NULL;
+    }
+    noRotac2->esq = noRotac1;
+    noRotac2->dir = (*no);
+
+    return noRotac2;
+}
+
+Node* rotacaoDuplaDir(Node **no) {
+    Node *noRotac1 = (*no)->dir;
+    Node *noRotac2 = noRotac1->esq;
+
+    if (noRotac2->esq) {
+        (*no)->dir = noRotac2->esq;
+    } else {
+        (*no)->dir = NULL;
+    }
+    if (noRotac2->dir) {
+        noRotac1->esq = noRotac2->dir;
+    } else {
+        noRotac1->esq = NULL;
+    }
+    noRotac2->esq = (*no);
+    noRotac2->dir = noRotac1;
+
+    return noRotac2;
+}
