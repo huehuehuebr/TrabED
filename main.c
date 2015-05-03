@@ -426,7 +426,7 @@ void imprimirArvore(Node *inicio, int alturaRaiz) {
     for (i; i < alturaRaiz; i++) {
         printf("\t");
     }
-    printf("(%d)", inicio->aluno->matricula);
+    printf("-(%d)", inicio->aluno->matricula);
     if (inicio->dir && inicio->esq) {
         printf("%c", 60);
     } else if (inicio->dir && !inicio->esq) {
