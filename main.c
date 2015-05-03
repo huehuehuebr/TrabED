@@ -34,10 +34,10 @@ typedef struct arvore {
 Node* criaNode();
 int inserir(Node **no);
 int remover(Node **no);
-void inserirRecursivo(Node **inicio, Aluno **novo);
+void inserirRecursivo(Node **no, Aluno **novo);
 void imprimir(Node *no);
 void buscar(Node *no);
-void busca(Node *b, int matricula);
+void busca(Node *no, int matricula);
 void imprimirPreOrdem(Node *no);
 Node* rotacaoEsq(Node **no);
 Node* rotacaoDir(Node **no);
@@ -47,13 +47,15 @@ Aluno* cadastrarAluno();
 void imprimirAluno(Aluno a);
 void clrscr();
 int menu();
-int calcularAlturaArvore(Node *inicio);
+int calcularAlturaArvore(Node *no);
 float somarMediaTurma(Node *no);
 int qtdNodes(Node *no);
 float calcularMediaTurma(Node *no);
-int calcularBalanceamento(Node *inicio);
-Node* balancearArvoreAVL(Node **inicio);
-void imprimirArvore(Node *inicio, int alturaRaiz);
+int calcularBalanceamento(Node *no);
+Node* balancearArvoreAVL(Node **no);
+void imprimirArvore(Node *no, int alturaRaiz);
+int removerAluno(Node **no, char matricula);
+Node* removerRecursivo(Node **no);
 
 /* Fim das funcoes */
 
@@ -107,9 +109,8 @@ int main(int argc, char **argv) {
                 break;
             }
         }
-        printf("\nPressione a tecla [Enter] para continuar");
-        getchar();
-        getchar();
+        printf("\nPressione qualquer tecla para continuar");
+        getche();
     } while (opcao != 0);
 
     return 0;
@@ -125,34 +126,34 @@ Node* criaNode() {
     return aux;
 }
 
-int inserir(Node **inicio) {
+int inserir(Node **no) {
     Aluno *aluno = cadastrarAluno();
-    if (*inicio == NULL) {
-        (*inicio) = criaNode();
-        (*inicio)->aluno = aluno;
+    if (*no == NULL) {
+        (*no) = criaNode();
+        (*no)->aluno = aluno;
         printf("\n\nRegistro inserido com Sucesso\n");
     } else {
 
-        inserirRecursivo(inicio, &aluno);
+        inserirRecursivo(no, &aluno);
     }
     return 0;
 }
 
-void inserirRecursivo(Node **inicio, Aluno **novo) {
-    if (((*inicio)->aluno->matricula) > ((*novo)->matricula)) {
-        if ((*inicio)->esq) {
-            inserirRecursivo(&((*inicio)->esq), novo);
+void inserirRecursivo(Node **no, Aluno **novo) {
+    if (((*no)->aluno->matricula) > ((*novo)->matricula)) {
+        if ((*no)->esq) {
+            inserirRecursivo(&((*no)->esq), novo);
         } else {
-            (*inicio)->esq = criaNode();
-            (*inicio)->esq->aluno = (*novo);
+            (*no)->esq = criaNode();
+            (*no)->esq->aluno = (*novo);
             printf("\n\nRegistro inserido com Sucesso\n");
         }
-    } else if (((*inicio)->aluno->matricula) < ((*novo)->matricula)) {
-        if ((*inicio)->dir) {
-            inserirRecursivo(&((*inicio)->dir), novo);
+    } else if (((*no)->aluno->matricula) < ((*novo)->matricula)) {
+        if ((*no)->dir) {
+            inserirRecursivo(&((*no)->dir), novo);
         } else {
-            (*inicio)->dir = criaNode();
-            (*inicio)->dir->aluno = (*novo);
+            (*no)->dir = criaNode();
+            (*no)->dir->aluno = (*novo);
             printf("\n\nRegistro inserido com Sucesso\n");
         }
     } else {
@@ -165,73 +166,55 @@ Aluno* cadastrarAluno() {
     Aluno *aluno = malloc(sizeof (Aluno));
     printf("\nInsira a matricula do aluno: ");
     scanf("%d", &(*aluno).matricula);
+    /*
     printf("\nInsira o nome do aluno: ");
     scanf(" %[^\n]s", &(*aluno).nome);
-
-    /*
-            printf("\nInsira o endereco do aluno: ");
-            gets(aluno.endereco);
-            printf("\nInsira o telefone do aluno: ");
-            gets(aluno.telefone);
-            printf("\nInsira o e-mail do aluno: ");
-            gets(aluno.email);
-            printf("\nInsira a 1ª nota do aluno: ");
-            scanf("%f", &aluno.nota1);
-            printf("\nInsira a 2ª nota do aluno: ");
-            scanf("%f", &aluno.nota2);
-            printf("\nInsira a 3ª nota do aluno: ");
-            scanf("%f", &aluno.nota3);
-            aluno.media = (aluno.nota1 + aluno.nota2 + aluno.nota3) / 3;
+    printf("\nInsira o endereco do aluno: ");
+    gets(aluno.endereco);
+    printf("\nInsira o telefone do aluno: ");
+    gets(aluno.telefone);
+    printf("\nInsira o e-mail do aluno: ");
+    gets(aluno.email);
+    printf("\nInsira a 1ª nota do aluno: ");
+    scanf("%f", &aluno.nota1);
+    printf("\nInsira a 2ª nota do aluno: ");
+    scanf("%f", &aluno.nota2);
+    printf("\nInsira a 3ª nota do aluno: ");
+    scanf("%f", &aluno.nota3);
+    aluno.media = (aluno.nota1 + aluno.nota2 + aluno.nota3) / 3;
      */
-
     return aluno;
 }
 
-void busca(Node *b, int matricula) {
+void busca(Node *no, int matricula) {
 
-    while (b != NULL) {
-        if (b->aluno->matricula == matricula) {
+    while (no != NULL) {
+        if (no->aluno->matricula == matricula) {
             clrscr();
-            imprimirAluno(*b->aluno);
-        } else
-            if (matricula < b->aluno->matricula)
-            b = b->esq;
-
-        else
-            b = b->dir;
+            imprimirAluno(*no->aluno);
+        } else {
+            if (matricula < no->aluno->matricula) {
+                no = no->esq;
+            } else {
+                no = no->dir;
+            }
+        }
+        printf("Aluno não matriculado!\n");
+        getche();
     }
-    printf("Aluno não matriculado!\n");
-    getche();
 }
 
-void buscar(Node *a) {
+void buscar(Node *no) {
     int matricula;
-    if (a == NULL) {
+    if (no == NULL) {
         printf("Árvore vazia!");
         getche();
         return;
     } else {
-
         printf("Digite a matricula do aluno: ");
         scanf("%d", &matricula);
-        busca(a, matricula);
+        busca(no, matricula);
     }
-}
-
-int remover(Node **no) {
-    /*
-     * Para removermos um nó de valor K na árvore devemos buscar K nesta árvore e, caso K seja folha da arvore, apenas deleta-lo. 
-     * Caso K pertença à árvore, mas não seja uma folha da árvore devemos substituir o valor de K com o valor mais próximo possível menor ou igual a K pertencente à árvore.
-     * Para encontrar este valor basta percorrer a subárvore da direita do filho da esquerda de K, até encontrarmos o maior valor M desta subárvore.
-     * O valor de K será substituído por M, K será deletado da árvore e caso M tenha um filho à esquerda esse filho ocupará sua antiga posição na árvore.*/
-
-    /* 
-     Node *atual;
-     int num;
-     atual = no;
-     */
-
-    return 0;
 }
 
 void imprimir(Node *no) {
@@ -432,6 +415,10 @@ void clrscr() {
 }
 
 void imprimirArvore(Node *inicio, int alturaRaiz) {
+    if (inicio == NULL && alturaRaiz == 0) {
+        printf("Árvore vazia!\n");
+        return;
+    }
     if (inicio == NULL)
         return;
     imprimirArvore(inicio->dir, alturaRaiz + 1);
@@ -449,4 +436,89 @@ void imprimirArvore(Node *inicio, int alturaRaiz) {
     }
     printf("\n");
     imprimirArvore(inicio->esq, alturaRaiz + 1);
+}
+
+int remover(Node **no) {
+    int matricula;
+    if (*no == NULL) {
+        printf("Árvore vazia!");
+        getche();
+        return 0;
+    } else {
+        printf("Digite a matricula do aluno: ");
+        scanf("%d", &matricula);
+        return removerAluno(no, matricula);
+    }
+    return 0;
+}
+
+int removerAluno(Node **no, char matricula) {
+    Node *noPai, *noRemovido = *no;
+    int isNoDir = 0;
+
+    if (matricula == noRemovido->aluno->matricula) {
+        *no = removerRecursivo(&noRemovido);
+        return 1;
+    }
+    while (noRemovido != NULL) {
+        if (matricula == noRemovido->aluno->matricula) {
+            if (isNoDir) {
+                noPai->dir = removerRecursivo(&noRemovido);
+            } else {
+                noPai->esq = removerRecursivo(&noRemovido);
+            }
+            return 1;
+        } else {
+            if (matricula < noRemovido->aluno->matricula) {
+                isNoDir = 0;
+                noPai = noRemovido;
+                (noRemovido) = noRemovido->esq;
+            } else {
+                isNoDir = 1;
+                noPai = noRemovido;
+                (noRemovido) = noRemovido->dir;
+            }
+        }
+    }
+    return 0;
+}
+
+Node* removerRecursivo(Node **no) {
+    Node *noAux;
+    Node *noAuxPai;
+    if (((*no)->esq == NULL) && ((*no)->dir == NULL)) {
+        free(*no);
+        return NULL;
+    } else if (((*no)->esq == NULL) && ((*no)->dir != NULL)) {
+        noAux = (*no)->dir;
+        free(*no);
+        return noAux;
+    } else if (((*no)->esq != NULL) && ((*no)->dir == NULL)) {
+        noAux = (*no)->esq;
+        free(*no);
+        return noAux;
+    } else {
+        if ((*no)->esq->dir == NULL) {
+            noAux = (*no)->esq;
+            (*no)->esq->dir = (*no)->dir;
+            free(*no);
+            return noAux;
+        } else {
+            noAux = (*no)->esq;
+            while (noAux->dir != NULL) {
+                noAuxPai = noAux;
+                noAux = noAux->dir;
+            }
+            if (noAux->esq != NULL) {
+                noAuxPai->dir = noAux->esq;
+            } else {
+                noAuxPai->dir = NULL;
+            }
+            noAux->dir = (*no)->dir;
+            noAux->esq = (*no)->esq;
+            free(*no);
+            return noAux;
+        }
+    }
+    return NULL;
 }
