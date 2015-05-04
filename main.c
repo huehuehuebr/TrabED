@@ -64,6 +64,7 @@ int main(int argc, char **argv) {
     setlocale(LC_ALL, "PT_BR.UTF-8");
 
     int opcao, altura, retorno;
+	float mediaTurma = 0;
     Node *inicio = NULL;
 
     do {
@@ -90,7 +91,9 @@ int main(int argc, char **argv) {
                 buscar(inicio);
                 break;
             case 5:
-                calcularMediaTurma(inicio);
+                mediaTurma = calcularMediaTurma(inicio);
+				printf("\nA media da turma eh %.2f\n",mediaTurma);
+				getche();
                 break;
             case 6:
                 balancearArvoreAVL(&inicio);
@@ -185,21 +188,25 @@ Aluno* cadastrarAluno() {
 }
 
 void busca(Node *no, int matricula) {
-
-    while (no != NULL) {
-        if (no->aluno->matricula == matricula) {
+	Node *atual;
+	atual = no;
+    while (atual != NULL) {
+        if (atual->aluno->matricula == matricula) {
             clrscr();
-            imprimirAluno(*no->aluno);
+            imprimirAluno(*atual->aluno);
+			getche();
+			return;
         } else {
-            if (matricula < no->aluno->matricula) {
-                no = no->esq;
+            if (matricula < atual->aluno->matricula) {
+                atual = atual->esq;
             } else {
-                no = no->dir;
+                atual = atual->dir;
             }
         }
-        printf("Aluno não matriculado!\n");
-        getche();
+        
     }
+	printf("Aluno não matriculado!\n");
+	getche();
 }
 
 void buscar(Node *no) {
@@ -216,7 +223,10 @@ void buscar(Node *no) {
 }
 
 void imprimir(Node *no) {
-    imprimirPreOrdem(no);
+	if(no!=NULL)
+		imprimirPreOrdem(no);
+	else
+		printf("A arvore esta vazia!\n");
 }
 
 void imprimirPreOrdem(Node *no) {
@@ -310,9 +320,12 @@ int qtdNodes(Node *no) {
 
 float calcularMediaTurma(Node *no) {
     float media;
-    media = somarMediaTurma(no) / qtdNodes(no);
-
-    return media;
+	if(no!=NULL){
+		media = somarMediaTurma(no) / qtdNodes(no);
+		return media;		
+	}
+	else
+		return 0;
 }
 
 Node* rotacaoEsq(Node **no) {
