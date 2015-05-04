@@ -133,8 +133,8 @@ int inserir(Node **no) {
         (*no)->aluno = aluno;
         printf("\n\nRegistro inserido com Sucesso\n");
     } else {
-
         inserirRecursivo(no, &aluno);
+        balancearArvoreAVL(no);
     }
     return 0;
 }
@@ -166,23 +166,21 @@ Aluno* cadastrarAluno() {
     Aluno *aluno = malloc(sizeof (Aluno));
     printf("\nInsira a matricula do aluno: ");
     scanf("%d", &(*aluno).matricula);
-    /*
     printf("\nInsira o nome do aluno: ");
     scanf(" %[^\n]s", &(*aluno).nome);
     printf("\nInsira o endereco do aluno: ");
-    gets(aluno.endereco);
+    scanf(" %[^\n]s", &(*aluno).endereco);
     printf("\nInsira o telefone do aluno: ");
-    gets(aluno.telefone);
+    scanf(" %[^\n]s", &(*aluno).telefone);
     printf("\nInsira o e-mail do aluno: ");
-    gets(aluno.email);
+    scanf(" %[^\n]s", &(*aluno).email);
     printf("\nInsira a 1ª nota do aluno: ");
-    scanf("%f", &aluno.nota1);
+    scanf("%f", &aluno->nota1);
     printf("\nInsira a 2ª nota do aluno: ");
-    scanf("%f", &aluno.nota2);
+    scanf("%f", &aluno->nota2);
     printf("\nInsira a 3ª nota do aluno: ");
-    scanf("%f", &aluno.nota3);
-    aluno.media = (aluno.nota1 + aluno.nota2 + aluno.nota3) / 3;
-     */
+    scanf("%f", &aluno->nota3);
+    aluno->media = (aluno->nota1 + aluno->nota2 + aluno->nota3) / 3;
     return aluno;
 }
 
@@ -222,10 +220,13 @@ void imprimir(Node *no) {
 }
 
 void imprimirPreOrdem(Node *no) {
-
     imprimirAluno(*no->aluno);
-    imprimirPreOrdem(no->esq);
-    imprimirPreOrdem(no->dir);
+    if (no->esq) {
+        imprimirPreOrdem(no->esq);
+    }
+    if (no->dir) {
+        imprimirPreOrdem(no->dir);
+    }
 }
 
 int menu() {
@@ -247,12 +248,11 @@ int menu() {
 }
 
 void imprimirAluno(Aluno a) {
-
     printf("\n---- Aluno ----\n");
     printf("Matricula: %d\n", a.matricula);
     printf("Nome: ");
     puts(a.nome);
-    /*printf("Endereco: ");
+    printf("Endereco: ");
     puts(a.endereco);
     printf("Telefone: ");
     puts(a.telefone);
@@ -261,7 +261,7 @@ void imprimirAluno(Aluno a) {
     printf("Nota 1: %.2f\n", a.nota1);
     printf("Nota 2: %.2f\n", a.nota2);
     printf("Nota 3: %.2f\n", a.nota3);
-    printf("Média: %.2f\n", a.media);*/
+    printf("Média: %.2f\n", a.media);
 }
 
 int calcularAlturaArvore(Node *inicio) {
@@ -439,7 +439,7 @@ void imprimirArvore(Node *inicio, int alturaRaiz) {
 }
 
 int remover(Node **no) {
-    int matricula;
+    int matricula, retorno;
     if (*no == NULL) {
         printf("Árvore vazia!");
         getche();
@@ -447,7 +447,9 @@ int remover(Node **no) {
     } else {
         printf("Digite a matricula do aluno: ");
         scanf("%d", &matricula);
-        return removerAluno(no, matricula);
+        retorno = removerAluno(no, matricula);
+        balancearArvoreAVL(no);
+        return retorno;
     }
     return 0;
 }
